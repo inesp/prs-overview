@@ -35,6 +35,9 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
+# Pycharm IDE config files
+.idea
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
