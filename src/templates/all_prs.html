@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <title>PRs overview</title>
+  </head>
+  <body>
+
+    <div class="container">
+
+      <h1>PRs overview</h1>
+
+      <div class="alert alert-success" role="alert">{{ now.strftime("%d. %m. %Y %H:%M:%S") }}</div>
+
+      {% if error %}
+        <div class="alert alert-danger" role="alert">{{ error }}</div>
+      {% else %}
+
+        <table>
+            <tr>
+              <td>Owner</td>
+              <td style="width:30%">Title</td>
+              <td>Assessors</td>
+              <td>Reviewers</td>
+              <td>Mentioned</td>
+              <td style="width:20%">Waiting for</td>
+            </tr>
+          {% for _, pr in prs.items() %}
+            <tr>
+              <td><img title="{{ pr.owner.login }} " src="{{ pr.owner.raw_data.avatar_url }}" width="25" height="25"></td>
+              <td>
+                  <div class="alert level level_{{ pr.created_ago_level }}">{{ pr.created_ago_nice }}</div>
+                  <div><a href="{{ pr.raw_data.url }}">{{ pr.raw_data.title }}</a></div>
+
+                  {% for label in pr.raw_data['labels'] %}
+                    <span class="badge badge-secondary">{{ label['name'] }}</span>
+                  {% endfor %}
+                  <span class="badge badge-success">+ {{ pr.raw_data['additions'] }}</span>
+                  <span class="badge badge-danger">- {{ pr.raw_data['deletions'] }}</span>
+              </td>
+              <td>
+                {% for person in pr.assessors %}
+                  <img title="{{ person.login }}" src="{{ person.raw_data.avatar_url }}" width="25" height="25">
+                {% endfor %}
+              </td>
+              <td>
+                {% for person in pr.reviewers %}
+                  <img title="{{ person.login }}" src="{{ person.raw_data.avatar_url }}" width="25" height="25">
+                {% endfor %}
+              </td>
+              <td>
+                TODO
+              </td>
+              <td>
+                {% for person, reason, _ in pr.waiting_for %}
+                  <div  class="alert alert-warning">
+                    <img title="{{ person.login }}" src="{{ person.raw_data.avatar_url }}" width="25" height="25">
+                    <span>{{ reason }}</span>
+                  </div>
+                {% endfor %}
+                {% if pr.approvals %}
+                  {% for person in pr.approvals %}
+                      <div  class="alert alert-success">
+                        <img title="{{ person.login }}" src="{{ person.raw_data.avatar_url }}" width="25" height="25">
+                        <span>APPROVED</span>
+                      </div>
+                  {% endfor %}
+                {% endif %}
+              </td>
+
+            </tr>
+          {% endfor %}
+        </table>
+
+        <div style="text-align:center;">by Ines</div>
+
+      {% endif %}
+    </div>
+
+  <style>
+    td{padding: 0.2rem 0.4rem; border:1px solid #cccccc;}
+    .level{padding: 0.2rem 0.4rem; display: inline-block;}
+    .level_1{background-color: #FFEC19}
+    .level_2{background-color: #FFC100}
+    .level_3{background-color: #FF9800; color:white;}
+    .level_4{background-color: #FF5607; color:white; font-size:120%;}
+    .level_5{background-color: #F6412D; color:white; font-size:140%;}
+    .level_6{background-color: #ff0044; color:white; font-size:150%; font-weight:bold;}
+  </style>
+  </body>
+</html>
